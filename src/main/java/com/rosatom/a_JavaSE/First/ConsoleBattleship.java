@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Represents a specific {@link Battleship}, which goes in the user's console.
@@ -101,8 +102,11 @@ public final class ConsoleBattleship extends Battleship<ConsoleBattleshipPlayer>
             for (int row = 0; row < playingField.length; row++) {
                 System.out.print(row + " |\t");
                 for (int cell : playingField[row]) {
-                    if (cell == 0) System.out.print("•\t");
-                    else System.out.print("▢\t");
+                    if (cell == 0) {
+                        System.out.print("•\t");
+                    } else {
+                        System.out.print("▢\t");
+                    }
                 }
                 System.out.println();
             }
@@ -154,23 +158,28 @@ public final class ConsoleBattleship extends Battleship<ConsoleBattleshipPlayer>
             // (there should be no 1's)
             for (int i = Math.max(x - 1, 0); i <= Math.min(x + 1, 9); i++) {
                 for (int j = Math.max(y - 1, 0); j <= Math.min(y + 1, 9); j++) {
-                    if (playingField[i][j] == 1) return false;
+                    if (playingField[i][j] == 1) {
+                        return false;
+                    }
                 }
             }
 
             // check the old coordinates for the current ship
             // (the ship should be placed exactly in one column/row)
             if (direction != null) {
+                Stream<String> coordinatesStream = coordinates.stream();
                 switch (direction) {
                     case "H" -> {
-                        if (coordinates.stream().anyMatch((old) ->
-                                Parser.parseCoordinate("x", old) != x))
+                        if (coordinatesStream.anyMatch((old) ->
+                                Parser.parseCoordinate("x", old) != x)) {
                             return false;
+                        }
                     }
                     case "V" -> {
-                        if (coordinates.stream().anyMatch((old) ->
-                                Parser.parseCoordinate("y", old) != y))
+                        if (coordinatesStream.anyMatch((old) ->
+                                Parser.parseCoordinate("y", old) != y)) {
                             return false;
+                        }
                     }
                 }
             }
