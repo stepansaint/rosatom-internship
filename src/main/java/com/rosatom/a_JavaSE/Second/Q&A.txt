@@ -1,0 +1,504 @@
+COLLECTIONS
+- Какие данные могут хранить коллекции?
+Только ссылочные (в отличие от шаблонов С++)
+
+
+
+- Расскажите про иерархию коллекций?
+Iterable <- Collection <- Set/Queue/List
+        Map отдельно (несовместимы, представляет собой коллекцию "ключ-значение")
+
+
+
+- Расскажите о коллекциях типа List?
+List <- ArrayList, LinkedList (для добавления многих элементов в середину),
+        @Deprecated Vector <- Stack (синхронизованные)
+
+
+
+- Расскажите о коллекциях типа Set?
+Set <- HashSet (HashMap с заглушкой) <- LinkedHashSet (LinkedHashMap)
+    <- SortedSet <- NavigableSet <- TreeSet (TreeMap)
+
+
+
+- Расскажите о коллекциях типа Queue?
+Queue <- PriorityQueue (натуральный порядок / компаратор)
+      <- Deque <- ArrayDeque, LinkedList (можно их как стек)
+
+
+
+- Расскажите о коллекциях типа Map, в чем их принципиальное отличие?
+Несовместимы с Collection (хранят пары "ключ - значение").
+Но входят в Collection API.
+
+
+
+- Назовите основные реализации List, Set, Map.
+List <- ArrayList, LinkedList (для добавления многих элементов в середину),
+     <- @Deprecated Vector <- Stack (синхронизованные)
+
+Set <- HashSet (HashMap с заглушкой) <- LinkedHashSet (LinkedHashMap)
+    <- SortedSet <- NavigableSet <- TreeSet (TreeMap)
+
+Map <- HashMap (в случае коллизий больше 7 односвязный список в КЧ-дерево) <-
+               LinkedHashMap (есть булевский флаг accessOrder)
+    <- SortedMap <- NavigableMap <- TreeMap (КЧ-дерево,
+                                    натуральный порядок / компаратор,
+                                    нельзя null)
+    <- WeakHashMap (содержит ключи: WeakReference<>, будут удалены при первой
+                    сборке мусора, если нет жестких ссылок на ключ)
+    <- @Deprecated Hashtable(синхронизованная, не допускает null)
+
+
+
+- Какие реализации SortedSet вы знаете и в чем их особенность?
+Set <- SortedSet <- NavigableSet <- TreeSet (внутри TreeMap, нельзя null)
+                                    Отсортированный (натуральный порядок / компаратор)
+
+
+
+- Что разного/общего у классов ArrayList и LinkedList, когда лучше использовать ArrayList, а когда LinkedList?
+Оба реализуют java.util.List.
+LinkedList при добавлении многих элементов в середину,
+    в остальных на практике лучше ArrayList.
+
+
+
+- В каких случаях разумно использовать массив, а не ArrayList?
+Массив в случае конечного числа элементов (быстрее ArrayList).
+ArrayList - динамический массив.
+
+
+
+- Чем отличается ArrayList от Vector?
+@Deprecated Vector - синхронизованный в отличие от ArrayList.
+
+
+
+- Что вы знаете о реализации классов HashSet и TreeSet?
+Set <- HashSet (использует hashCode() при добавлении/поиске/удалении элементов,
+                внутри HashMap с объектом-заглушкой)
+    <- SortedSet <- NavigableSet <- TreeSet (использует compareTo(T)/compare(T,T),
+                                             внутри TreeMap,
+                                             нельзя null)
+
+
+
+- Чем отличаются HashMap и TreeMap? Как они устроены и работают?
+        Что со временем доступа к объектам, какие зависимости?
+HashMap - неупорядоченный порядок ключей,
+          использует hashCode(), затем equals(Object), допускает null
+          put(K,V)/remove(K) - O(n)/Ω(1)
+
+TreeMap - отсортированный порядок ключей
+          (использует compareTo(T)/compare(T,T)), нельзя null
+          put(K,V)/remove(K) - Θ(logN)
+
+TreeMap лучше также в том случае, когда необходимо иметь вещественные ключи:
+    передаем Comparator<T> на разницу 1e-9
+
+
+
+- Что такое Hashtable, чем она отличается от HashMap?
+Hashtable - синхронизованная и не допускает null ключей, в отличие от HashMap
+Вместо нее - java.util.ConcurrentHashMap / Collectoins.synchronizedMap(Map)
+
+
+
+- Что будет, если в Map положить два значения с одинаковым ключом?
+Старое перетрется (put(K,V))
+Но есть putIfAbsent(K,V)
+
+
+
+- Как задается порядок следования объектов в коллекции, как отсортировать коллекцию?
+compareTo(T) / compare(T,T)
+Collections.sort(List) / (List/Comparator)
+
+
+
+- Дайте определение понятию “итератор”.
+Объект для перебора элементов коллекции.
+Достается от Iterable<T> <- Collection<T>
+
+
+
+- Какую функциональность представляет класс Collections?
+Утилитный класс для коллекций.
+sort(List<T>) / (List<T>, Comparator<T,T>)
+shuffle(List)
+reverse(List)
+binarySearch(List, T) на отсортированной!
+frequency(List, Object)
+synchronized...(Collection)
+unmodifiable...(Collection)
+
+
+
+- Как получить коллекцию только для чтения? Как получить не модифицируемую коллекцию?
+Collections.unmodifiable...(Collection)
+
+
+
+- Какие коллекции синхронизованы?
+java.util.concurrent
+@Deprecated Hashtable, Vector <- Stack
+Collections.synchronized...(Collection)
+
+
+
+- Как получить синхронизированную коллекцию из не синхронизированной?
+Collections.synchronized...(Collection) - просто обертка с блоками synchronized
+
+
+
+- Почему Map не наследуется от Collection?
+Несовместимы. Map использует пару ключ-значение.
+
+
+
+- В чем разница между Iterator и Enumeration?
+Enumeration<T> работает быстрее Iterator<T>. Нельзя удалять элемент.
+Iterator<T> имеет метод remove().
+
+
+
+- Как реализован цикл foreach?
+Доступен благодаря имплементации Iterable<T>.
+for (T t : ts) {}
+
+
+
+- Почему нет метода iterator.add() чтобы добавить элементы в коллекцию?
+Iterator<T> хранит только один элемент, просто указатель.
+В любом случае каждая коллекция имеет add(), причем коллекции бывают
+    упорядоченные и нет.
+
+
+
+- Почему в классе iterator нет метода для получения следующего элемента без передвижения курсора?
+Iterator<T> просто указатель на текущий элемент коллекции.
+
+
+
+- В чем разница между Iterator и ListIterator?
+ListIterator<T> может добавлять элемент и перемещаться в обе стороны.
+    Только для java.util.List.
+
+
+
+- Какие есть способы перебора всех элементов List?
+for/while/foreach/iterator/listIterator
+
+
+
+- В чем разница между fail-safe и fail-fast свойствами?
+fail-fast - "быстрый" итератор, при изменении коллекции генерирует исключение
+    java.util.ConcurrentModificationException
+fail-safe - "безопасный" итератор, итерируется по копии коллекции (ConcurrentHashMap).
+    Но может не отображать изменения.
+
+
+
+- Что делать, чтобы не возникло исключение ConcurrentModificationException?
+java.util.ConcurrentModificationException возникает, когда коллекция
+    изменяется во время итерации.
+Чтобы не допустить:
+    - Использовать итератор и удалять элементы с помощью него.
+    - Использовать копию коллекцию для итерации, изменяя оригинал.
+    - Использовать concurrent-коллекции (ConcurrentLinkedQueue, ConcurrentHashMap).
+    - Использовать Collections.synchronized...(Collection).
+    - Использовать синхронизацию (обернуть итератор) - медленно.
+
+
+
+- Что такое стек и очередь, расскажите в чем их отличия?
+Две структуры данных.
+Queue - FIFO: голова - начало, хвост - конец.
+    Добавляем в tail, работаем с head.
+Stack (Deque) - LIFO: голова - начало и конец.
+    Добавляем и работаем с head.
+
+
+
+- В чем разница между интерфейсами Comparable и Comparator?
+Comparable<T>: compareTo(T) позволяет указать в классе натуральный порядок
+    его экземпляров
+Comparator<T>: compare(T,T) позволяет указать любой порядок элементов
+Оба @FunctionalInterface
+
+
+
+- Почему коллекции не наследуют интерфейсы Cloneable и Serializable?
+Это просто не нужно. Коллекции часто содержат много данных.
+Вместо Cloneable используется копирование через конструктор.
+Но есть ArrayList и LinkedList, которые реализуют эти маркерный интерфейсы.
+
+
+
+
+
+EXCEPTIONS
+Это механизм нелокальной передачи управления.
+При помощи catch мы можем остановить летящее исключение
+    (причина, по которой мы автоматически покидаем фреймы).
+- Какова иерархия исключений.
+Throwable <- Error (UE)
+          <- Exception <- CheckedExceptions (IOE, SQLE)
+                       <- RuntimeException (UE)
+
+
+
+- Можно/нужно ли обрабатывать ошибки jvm?
+Можно, но не нужно. Это исключения работы JVM (OutOfMemoryError, StackOverFlowError),
+    которые вряд ли получится исправить средствами языка.
+
+
+
+- Какие существуют способы обработки исключений?
+try-catch(-finally) / после сигнатуры метода throws E
+
+
+
+- О чем говорит ключевое слово throws?
+Метод может сгенерировать исключение типа, указанного после throws.
+
+
+
+- В чем особенность блока finally? Всегда ли он исполняется?
+Почти всегда, кроме случаев:
+- System.exit(int)
+- Поток является daemon, и все non-daemon потоки закончили свою работу
+    во время перехода к finally
+- Если в finally сгенерируется исключение, то finally не закончит свою работу
+
+
+
+- Может ли не быть ни одного блока catch при отлавливании исключений?
+try-with-resources, try-finally (и throws после сигнатуры метода)
+
+
+
+- Может ли один блок catch отлавливать несколько исключений (с одной и разных веток наследований)?
+Да, если требуется одинаковая обработка.
+    } catch (IOException | SQLException e) {}
+
+
+
+- Что вы знаете об обрабатываемых и не обрабатываемых (checked/unchecked) исключениях?
+Средства обработки checked-исключений контролируются на этапе компиляции
+    (либо catch, либо декларация на уровне метода)
+Для unchecked - наличие средств обработки происходит в runtime
+    (по желанию, можно и отлавливать, и декларировать)
+
+
+
+- В чем особенность RuntimeException?
+Unchecked-исключение, наследник Exception.
+Не требует явной обработки.
+Наличие обработчика будет проверяться в runtime.
+
+
+
+- Как написать собственное (“пользовательское”) исключение?
+Наследоваться от E / RE или более конкретного типа
+
+
+
+- Какой оператор позволяет принудительно выбросить исключение?
+throws new Exception()
+
+
+
+- Есть ли дополнительные условия к методу, который потенциально может выбросить исключение?
+Если checked-исключение, то обязательное наличие декларации на методе.
+При unchecked-исключениях, это не обязательно (но правила хорошего тона
+    говорят об обратном)
+
+
+
+- Может ли метод main выбросить исключение во вне и если да, то где будет происходить обработка данного исключения?
+Да.
+Обработка будет происходить обработчиком исключений по-умолчанию (JVM).
+
+
+
+- Если оператор return содержится и в блоке catch и в finally, какой из них “главнее”?
+return выполнится в блоке finally
+
+
+
+- Что вы знаете о OutOfMemoryError?
+Существует 4 типа OutOfMemoryError:
+    - java.lang.OutOfMemoryError: Java heap space
+        (Когда
+
+    - java.lang.OutOfMemoryError: PermGen space
+    - java.lang.OutOfMemoryError: GC overhead limit exceeded
+    - java.lang.OutOfMemoryError: unable to create new native thread
+
+
+
+- Что вы знаете о SQLException?
+        К какому типу checked или unchecked оно относится, почему?
+java.sql.SQLException - checked-исключение, которое возникает при проблемах
+    с доступом к бд. Например, при синтаксической ошибке в запросе.
+    То есть эта та ошибка, которую возможно исправить.
+
+
+
+- Что такое Error? В каком случае используется Error. Приведите пример Error’а.
+java.lang.OutOfMemoryError, java.lang.StackOverflowError,
+java.lang.ExceptionInInitializerError, java.lang.NoClassDefFoundError
+Это ошибки JVM, которые вряд ли получится исправить программно.
+
+
+
+- Какая конструкция используется в Java для обработки исключений?
+try-catch
+
+
+
+- Предположим, есть блок try-finally.
+        В блоке try возникло исключение, и выполнение переместилось
+        в блок finally. В блоке finally тоже возникло исключение.
+        Какое из двух исключений “выпадет” из блока try-finally?
+        Что случится со вторым исключением?
+Из блока finally. Исключение из finally просто перекроет другое исключение.
+(Такое же поведение и с операторами return).
+
+
+
+- Предположим, есть метод, который может выбросить IOException
+        и FileNotFoundException в какой последовательности должны
+        идти блоки catch?
+        Сколько блоков catch будет выполнено?
+Блоки catch должны идти в порядке от менее общего к более общему.
+Блок catch будет выполнен только один.
+
+
+
+
+
+REFLECTION
+Вопросы для подготовки:
+- Что такое Рефлексия?
+Механизм, который позволяет получить данные о программе во время ее исполнения.
+
+
+
+- Минусы Рефлексии
+Нарушение инкапсуляции
+Производительность хуже, чем в классической работе
+
+
+
+- Что такое Класс класса, у кого он есть?
+Class<> - это класс, с помощью которого возможно пользоваться рефлексией
+У всех объектов Java есть Class<>
+
+
+
+- Как получить Класс класса?
+Integer.class - ключевое слово class
+Class.forName(String) - метод, который принимает полное название класса
+new Object().getClass() - метод у Object, который возвращает класс экземпляра
+
+
+
+- Как получить информацию о переменных класса с помощью Рефлексии?
+someClass.getDeclaredFields() / someClass.getDeclaredField(String)
+    - переменные, объявленные внутри класса
+someClass.getField() / someClass.getDeclaredField(String)
+    - public переменные (в том числе от родительского класса)
+
+
+
+- Как получить информацию о методах в классе с помощью Рефлексии?
+someClass.getDeclaredMethods() / someClass.getDeclaredMethod(String, Class... (params))
+    - методы, объявленные внутри класса
+someClass.getMethods() / someClass.getMethod(String, Class...(params))
+    - public методы (в том числе от родительского класса)
+
+someClass.getEnclosingClass() - если класс - локальный, можно получить
+    обрамляющий метод/класс/конструктор (или null)
+
+
+
+- Что вы знаете о классе Класс Field?
+Можно получить через:
+someClass.getDeclaredFields() / someClass.getDeclaredField(String) -
+    поля, объявленные внутри класса
+someClass.getFields() / someClass.getField(String) -
+    public поля (в том числе и родительские)
+Далее через экземпляр класса Field возможно установить значение
+    (если private, то сначала field.setAccessible(true))
+
+
+
+- Что такое Аннотации в Java?
+Это метаданные, которые представляют информацию о программе.
+Указывает компилятору, что делать с участками кода помимо исполнения программы.
+
+
+
+- Какие функции выполняет Аннотации?
+Дает некоторую информацию компилятору,
+    а также позволяет получить данные через Reflection.
+
+
+
+- Какие встроенные аннотации в Java вы знаете?
+@Override, @Deprecated, @SafeVarargs, @SuppressWarnings, @FunctionalInterface
+    @Target, @Retention, @Documented
+
+
+
+- Что делают аннотации @Override, @Deprecated, @SafeVarargs и @SuppressWarnings?
+@Override - используется для проверки компилятором наличие факта переопределения
+@Deprecated - пометить устаревший класс/метод/поле
+@SafeVarargs - позволяет подавить предупреждение об использовании обобщенных типов
+    с переменным количеством параметров
+@SuppressWarnings - подавление предупреждений компилятора (ex: @SuppressWarnings("rawtypes")
+
+
+
+- Что делают аннотации @Retention, @Documented, @Target и @Inherited?
+Это мета-аннотации. То есть те, которые применимы к другим.
+@Retention - жизненный цикл аннотации
+@Documented - аннотация будет помещена в Javadoc (по-умолчанию: нет)
+@Target - к чему применима аннотация
+@Inherited - для наследования аннотации от родителя к наследнику (по-умолчанию: нет)
+
+
+
+- Какой жизненный цикл аннотации можно указать с помощью @Retention?
+RetentionPolicy.SOURCE - доступна только в исходниках, при компиляции удаляется
+RetentionPolicy.CLASS - доступна после компиляции только в class-файле
+RetentionPolicy.RUNTIME - доступна в runtime
+По-умолчанию CLASS
+
+
+
+- К каким элементам можно применять аннотацию, как это указать?
+@Target(...)
+ElementType.TYPE (class, interface, @interface, enum)
+ElementType.FIELD
+ElementType.METHOD
+ElementType.PACKAGE
+...
+По-умолчанию все, кроме TYPE_PARAMETER (generic-type)
+
+
+
+- Как создать свою Аннотацию?
+@interface, далее ее характеристику можно задать с помощью мета-аннотаций:
+@Target(ElementType[])
+@Retention(RetentionPolicy)
+@Documented
+
+
+
+- Атрибуты каких типов допустимы в аннотациях?
+Примитивы, String, annotation, enum, Class<?>, - и массивы этих типов
