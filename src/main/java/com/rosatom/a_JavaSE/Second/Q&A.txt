@@ -332,8 +332,6 @@ return выполнится в блоке finally
 - Что вы знаете о OutOfMemoryError?
 Существует 4 типа OutOfMemoryError:
     - java.lang.OutOfMemoryError: Java heap space
-        (Когда
-
     - java.lang.OutOfMemoryError: PermGen space
     - java.lang.OutOfMemoryError: GC overhead limit exceeded
     - java.lang.OutOfMemoryError: unable to create new native thread
