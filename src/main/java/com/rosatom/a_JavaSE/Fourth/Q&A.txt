@@ -47,7 +47,7 @@ Thread.currentThread().{stop(), suspend(), resume()}
 - Как остановить поток?
 Использовать метод interrupt(), а внутри потока, на котором вызывается этот метод,
 проверять флаг interrupted с помощью методов:
-    Thread.interrupted() (сбрасывает флаг) или Thread.isInterrupted()
+    Thread.interrupted() (сбрасывает флаг) или Thread.currentThread().isInterrupted()
 
 
 
@@ -101,7 +101,7 @@ Thread.State NEW - not started yet
              BLOCKED - waiting for a release of a monitor
              WAITING - indefinitely waiting for another thread
              TIMED_WAITING - timed waiting for another thread
-             TERMINATED - done his job
+             TERMINATED - done its job
 
 
 
