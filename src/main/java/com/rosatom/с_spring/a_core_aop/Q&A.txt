@@ -1,0 +1,47 @@
+Материалы для изучения:
+- Интернет :)
+
+Core:
+- Что такое Spring Framework.
+- Каковы некоторые из важных особенностей и преимуществ Spring Framework?
+- Что вы понимаете под Dependency Injection (DI)?
+- Как реализуется DI в Spring Framework?
+- Что такое IoC контейнер Spring?
+- Что такое Spring бин?
+- Каковы различные способы настроить класс как Spring Bean?
+- Какие вы знаете различные scope у Spring Bean?
+- Как работает scope Prototype?
+- Каков bean scope по умолчанию в Spring Framework?
+- Что такое жизненный цикл Spring Bean?
+- Что такое связывание в Spring и расскажите об аннотации @Autowired?
+- Каковы различные типы автоматического связывания в Spring?
+- Как вы решаете какой бин инжектировать, если у вас несколько подходящих бинов. Расскажите о @Primary и @Qualifier?
+- Как мы можем проводить инъекцию бинов в Spring?
+- Какой способ инъекции бинов является лучшим и почему?
+- Что такое ApplicationContext?
+- В чем разница между BeanFactory и ApplicationContext?
+- Что такое BeanFactoryPostProcessor и когда он используется?
+- Что такое BeanPostProcessor и чем он отличается от BeanFactoryPostProcessor?
+- Является ли Spring бин потокобезопасным?
+- Можем ли мы иметь несколько файлов конфигурации Spring?
+- Для чего нужен Component Scan?
+- В чём отличие между @Component и @ComponentScan?
+- Для чего используется аннотация @Bean?
+- В чём разница между @Bean и @Component?
+- В чём разница между @Component, @Service и @Repository аннотациями?
+- Можем ли мы использовать @Component вместо @Service для бизнес логики?
+
+
+
+
+AOP:
+- Что вы понимаете под аспектно-ориентированным программированием (Aspect Oriented Programming — AOP)?
+- Когда полезно использовать AOP?
+- Что такое Aspect?
+- Что такое Advice?
+- Что такое Pointcut?
+- Что такое JointPoint?
+- Что такое Advice Arguments?
+- Что такое AOP Proxies?
+- В чем разница между Spring AOP и AspectJ АОП?
+
