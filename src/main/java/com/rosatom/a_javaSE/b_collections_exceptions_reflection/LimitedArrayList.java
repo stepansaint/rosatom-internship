@@ -1,7 +1,5 @@
-package com.rosatom.a_JavaSE.Second;
+package com.rosatom.a_javaSE.b_collections_exceptions_reflection;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.*;
 
 public class LimitedArrayList {

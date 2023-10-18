@@ -1,4 +1,4 @@
-package com.rosatom.b_Hibernate.dao;
+package com.rosatom.b_hibernate.dao;
 
 import java.util.List;
 import java.util.Optional;

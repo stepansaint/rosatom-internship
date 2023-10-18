@@ -1,4 +1,4 @@
-package com.rosatom.a_JavaSE.Second;
+package com.rosatom.a_javaSE.b_collections_exceptions_reflection;
 
 import java.io.OutputStream;
 import java.io.PrintStream;

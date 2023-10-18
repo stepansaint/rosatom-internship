@@ -1,4 +1,4 @@
-package com.rosatom.a_JavaSE.Second;
+package com.rosatom.a_javaSE.b_collections_exceptions_reflection;
 
 import java.util.HashMap;
 import java.util.Map;

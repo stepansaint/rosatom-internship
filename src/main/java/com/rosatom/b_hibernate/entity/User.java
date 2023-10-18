@@ -1,4 +1,4 @@
-package com.rosatom.b_Hibernate.entity;
+package com.rosatom.b_hibernate.entity;
 
 import static java.util.Objects.requireNonNull;
 

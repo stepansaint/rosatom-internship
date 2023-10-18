@@ -1,4 +1,4 @@
-package com.rosatom.a_JavaSE.First;
+package com.rosatom.a_javaSE.a_core;
 
 /**
  * Represents a utility class for {@link Battleship}.

@@ -1,4 +1,4 @@
-package com.rosatom.a_JavaSE.Third;
+package com.rosatom.a_javaSE.c_io_serialization_generics;
 
 import java.io.*;
 import java.nio.file.Files;

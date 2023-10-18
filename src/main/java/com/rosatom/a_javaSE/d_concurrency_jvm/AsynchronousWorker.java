@@ -1,4 +1,4 @@
-package com.rosatom.a_JavaSE.Fourth;
+package com.rosatom.a_javaSE.d_concurrency_jvm;
 
 import java.util.concurrent.*;
 

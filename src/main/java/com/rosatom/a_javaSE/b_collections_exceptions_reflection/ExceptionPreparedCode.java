@@ -1,4 +1,4 @@
-package com.rosatom.a_JavaSE.Second;
+package com.rosatom.a_javaSE.b_collections_exceptions_reflection;
 
 public class ExceptionPreparedCode {
     public static void main(String[] args) {

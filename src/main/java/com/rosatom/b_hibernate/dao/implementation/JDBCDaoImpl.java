@@ -1,8 +1,7 @@
-package com.rosatom.b_Hibernate.dao.implementation;
+package com.rosatom.b_hibernate.dao.implementation;
 
-import com.rosatom.b_Hibernate.dao.Dao;
-import com.rosatom.b_Hibernate.entity.User;
-import org.postgresql.Driver;
+import com.rosatom.b_hibernate.dao.Dao;
+import com.rosatom.b_hibernate.entity.User;
 
 import java.sql.*;
 import java.util.ArrayList;

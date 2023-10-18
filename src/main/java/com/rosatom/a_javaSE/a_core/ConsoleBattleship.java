@@ -1,4 +1,4 @@
-package com.rosatom.a_JavaSE.First;
+package com.rosatom.a_javaSE.a_core;
 
 import java.util.LinkedHashSet;
 import java.util.Scanner;

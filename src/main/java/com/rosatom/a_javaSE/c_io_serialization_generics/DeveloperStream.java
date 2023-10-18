@@ -1,7 +1,6 @@
-package com.rosatom.a_JavaSE.Third;
+package com.rosatom.a_javaSE.c_io_serialization_generics;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DeveloperStream {
