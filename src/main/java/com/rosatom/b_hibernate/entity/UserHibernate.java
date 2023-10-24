@@ -1,16 +1,28 @@
 package com.rosatom.b_hibernate.entity;
 
+import javax.persistence.*;
+
 import static java.util.Objects.requireNonNull;
 
-public class User {
-    private final Long id;
+@Entity
+@Table(name = "users")
+public class UserHibernate {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+    @Column(name = "name")
     private String name;
+    @Column(name = "surname")
     private String surname;
+    @Column(name = "age")
     private Integer age;
+    @Column(name = "hobby")
     private String hobby;
 
-    public User(Long id, String name, String surname, Integer age, String hobby) {
-        this.id = requireNonNull(id, "Field id can't be null");
+    public UserHibernate() {}
+
+    public UserHibernate(String name, String surname, Integer age, String hobby) {
         this.name = requireNonNull(name, "Field name can't be null");
         this.surname = requireNonNull(surname, "Field surname can't be null");
         this.age = requireNonNull(age, "Field age can't be null");
@@ -55,7 +67,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "UserHibernate{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +

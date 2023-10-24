@@ -1,7 +1,7 @@
 package com.rosatom.b_hibernate.dao.implementation;
 
 import com.rosatom.b_hibernate.dao.Dao;
-import com.rosatom.b_hibernate.entity.User;
+import com.rosatom.b_hibernate.entity.UserJDBC;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ class Test {
  * Represents a connection to a PostgreSQL database using JDBC.
  * Allows performing CRUD operations (with filtering and pagination).
  */
-public class JDBCDaoImpl implements Dao<User>, AutoCloseable {
+public class JDBCDaoImpl implements Dao<UserJDBC>, AutoCloseable {
     private final Connection connection;
 
     public JDBCDaoImpl(String dbName, String user, String password) throws SQLException {
@@ -34,20 +34,22 @@ public class JDBCDaoImpl implements Dao<User>, AutoCloseable {
                 "jdbc:postgresql://localhost:5432/" + dbName,
                 user,
                 password);
+        Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        ResultSet set = statement.executeQuery(" ");
     }
 
     @Override
-    public void save(User user) throws SQLException {
+    public void save(UserJDBC userJDBC) throws SQLException {
         try (PreparedStatement statement =
                      connection.prepareStatement("INSERT INTO public.users (name, surname, age, hobby) " +
                              "VALUES (?, ?, ?, ?)")) {
 
-            setAndExecuteStatement(statement, user, null);
+            setAndExecuteStatement(statement, userJDBC, null);
         }
     }
 
     @Override
-    public Optional<User> getById(Long id) throws SQLException {
+    public Optional<UserJDBC> getById(Long id) throws SQLException {
         try (PreparedStatement statement =
                      connection.prepareStatement("SELECT * FROM public.users WHERE id = ?;")) {
 
@@ -57,12 +59,12 @@ public class JDBCDaoImpl implements Dao<User>, AutoCloseable {
     }
 
     @Override
-    public Optional<List<User>> getByName(String name) throws SQLException {
+    public Optional<List<UserJDBC>> getByName(String name) throws SQLException {
         return getByName(name, Integer.MAX_VALUE, 0);
     }
 
     @Override
-    public Optional<List<User>> getByName(String name, Integer limit, Integer offset)
+    public Optional<List<UserJDBC>> getByName(String name, Integer limit, Integer offset)
             throws SQLException {
         try (PreparedStatement statement =
                      connection.prepareStatement("SELECT * FROM public.users " +
@@ -75,12 +77,12 @@ public class JDBCDaoImpl implements Dao<User>, AutoCloseable {
     }
 
     @Override
-    public Optional<List<User>> getByAge(Integer age) throws SQLException {
+    public Optional<List<UserJDBC>> getByAge(Integer age) throws SQLException {
         return getByAge(age, Integer.MAX_VALUE, 0);
     }
 
     @Override
-    public Optional<List<User>> getByAge(Integer age, Integer limit, Integer offset)
+    public Optional<List<UserJDBC>> getByAge(Integer age, Integer limit, Integer offset)
             throws SQLException {
         try (PreparedStatement statement =
                      connection.prepareStatement("SELECT * FROM public.users " +
@@ -93,12 +95,12 @@ public class JDBCDaoImpl implements Dao<User>, AutoCloseable {
     }
 
     @Override
-    public Optional<List<User>> getAll() throws SQLException {
+    public Optional<List<UserJDBC>> getAll() throws SQLException {
         return getAll(Integer.MAX_VALUE, 0);
     }
 
     @Override
-    public Optional<List<User>> getAll(Integer limit, Integer offset) throws SQLException {
+    public Optional<List<UserJDBC>> getAll(Integer limit, Integer offset) throws SQLException {
         try (PreparedStatement statement =
                      connection.prepareStatement("SELECT * FROM public.users LIMIT ? OFFSET ?;")) {
 
@@ -107,12 +109,12 @@ public class JDBCDaoImpl implements Dao<User>, AutoCloseable {
     }
 
     @Override
-    public void updateById(Long id, User user) throws SQLException {
+    public void updateById(Long id, UserJDBC userJDBC) throws SQLException {
         try (PreparedStatement statement =
                      connection.prepareStatement("UPDATE public.users SET " +
                              "name = ?, surname = ?, age = ?, hobby = ? WHERE id = ?;")) {
 
-            setAndExecuteStatement(statement, user, id);
+            setAndExecuteStatement(statement, userJDBC, id);
         }
     }
 
@@ -132,15 +134,15 @@ public class JDBCDaoImpl implements Dao<User>, AutoCloseable {
         }
     }
 
-    private void setAndExecuteStatement(PreparedStatement statement, User user, Long id)
+    private void setAndExecuteStatement(PreparedStatement statement, UserJDBC userJDBC, Long id)
             throws SQLException {
         int parameterIndex = 1;
 
-        if (user != null) {
-            statement.setString(parameterIndex++, user.getName());
-            statement.setString(parameterIndex++, user.getSurname());
-            statement.setInt(parameterIndex++, user.getAge());
-            statement.setString(parameterIndex++, user.getHobby());
+        if (userJDBC != null) {
+            statement.setString(parameterIndex++, userJDBC.getName());
+            statement.setString(parameterIndex++, userJDBC.getSurname());
+            statement.setInt(parameterIndex++, userJDBC.getAge());
+            statement.setString(parameterIndex++, userJDBC.getHobby());
         }
 
         if (id != null) {
@@ -150,9 +152,9 @@ public class JDBCDaoImpl implements Dao<User>, AutoCloseable {
         statement.executeUpdate();
     }
 
-    private Optional<List<User>> getUsersListFromStatement(PreparedStatement statement,
-                                                           Integer limit, Integer offset,
-                                                           int parameterIndex)
+    private Optional<List<UserJDBC>> getUsersListFromStatement(PreparedStatement statement,
+                                                               Integer limit, Integer offset,
+                                                               int parameterIndex)
             throws SQLException {
 
         statement.setInt(parameterIndex++, limit);
@@ -160,8 +162,8 @@ public class JDBCDaoImpl implements Dao<User>, AutoCloseable {
 
         final ResultSet result = statement.executeQuery();
 
-        Optional<List<User>> optionalUsers = Optional.empty();
-        Optional<User> user = getUserFromResultSet(result, null);
+        Optional<List<UserJDBC>> optionalUsers = Optional.empty();
+        Optional<UserJDBC> user = getUserFromResultSet(result, null);
         if (user.isPresent()) {
             optionalUsers = Optional.of(new ArrayList<>());
 
@@ -174,15 +176,15 @@ public class JDBCDaoImpl implements Dao<User>, AutoCloseable {
         return optionalUsers;
     }
 
-    private Optional<User> getUserFromResultSet(ResultSet result, Long id)
+    private Optional<UserJDBC> getUserFromResultSet(ResultSet result, Long id)
             throws SQLException {
         return result.next()
-                ? Optional.of(new User(
-                        (id == null ? result.getLong("id") : id),
-                        result.getString("name"),
-                        result.getString("surname"),
-                        result.getInt("age"),
-                        result.getString("hobby")))
+                ? Optional.of(new UserJDBC(
+                (id == null ? result.getLong("id") : id),
+                result.getString("name"),
+                result.getString("surname"),
+                result.getInt("age"),
+                result.getString("hobby")))
                 : Optional.empty();
     }
 }
