@@ -17,9 +17,9 @@ class TestHibernate {
     public static void main(String[] args) throws SQLException {
         try (HibernateDaoImpl connection = new HibernateDaoImpl(
                 "test_db", "postgres", "", HibernateDaoImpl.HibernateDaoMode.HQL)) {
-//            UserHibernate user = new UserHibernate("another", "one", 4, "ff");
+            UserHibernate user = new UserHibernate("another", "one", 4, "ff");
 
-//            connection.deleteById(1L);
+            System.err.println(connection.getById(1L));
 //            System.out.println(connection.getByAge(44).get());
         }
     }
@@ -43,25 +43,21 @@ public class HibernateDaoImpl implements Dao<UserHibernate>, AutoCloseable {
 
     @Override
     public void save(UserHibernate user) {
-        Session session = factory.getCurrentSession();
-        session.beginTransaction();
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
 
-        try {
             session.save(user); // HQL and Criteria API don't have INSERT INTO ... VALUES functionality
+
             session.getTransaction().commit();
-        } catch (RuntimeException e) {
-            session.getTransaction().rollback();
         }
     }
 
     @Override
     public Optional<UserHibernate> getById(Long id) {
-        Session session = factory.getCurrentSession();
-        session.beginTransaction();
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
 
-        List<UserHibernate> users = Collections.emptyList();
-
-        try {
+            List<UserHibernate> users = Collections.emptyList();
             switch (mode) {
                 case CRITERIA -> {
                     CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -83,12 +79,11 @@ public class HibernateDaoImpl implements Dao<UserHibernate>, AutoCloseable {
                             .getResultList();
                 }
             }
-        } catch (RuntimeException e) {
-            session.getTransaction().rollback();
-        }
 
-        session.getTransaction().commit();
-        return Optional.ofNullable(users.isEmpty() ? null : users.get(0));
+            session.getTransaction().commit();
+
+            return Optional.ofNullable(users.isEmpty() ? null : users.get(0));
+        }
     }
 
     @Override
@@ -98,12 +93,10 @@ public class HibernateDaoImpl implements Dao<UserHibernate>, AutoCloseable {
 
     @Override
     public Optional<List<UserHibernate>> getByName(String name, Integer limit, Integer offset) {
-        Session session = factory.getCurrentSession();
-        session.beginTransaction();
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
 
-        List<UserHibernate> users = Collections.emptyList();
-
-        try {
+            List<UserHibernate> users = Collections.emptyList();
             switch (mode) {
                 case CRITERIA -> {
                     CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -129,12 +122,11 @@ public class HibernateDaoImpl implements Dao<UserHibernate>, AutoCloseable {
                             .getResultList();
                 }
             }
-        } catch (RuntimeException e) {
-            session.getTransaction().rollback();
-        }
 
-        session.getTransaction().commit();
-        return Optional.of(users);
+            session.getTransaction().commit();
+
+            return Optional.of(users);
+        }
     }
 
     @Override
@@ -144,12 +136,10 @@ public class HibernateDaoImpl implements Dao<UserHibernate>, AutoCloseable {
 
     @Override
     public Optional<List<UserHibernate>> getByAge(Integer age, Integer limit, Integer offset) {
-        Session session = factory.getCurrentSession();
-        session.beginTransaction();
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
 
-        List<UserHibernate> users = Collections.emptyList();
-
-        try {
+            List<UserHibernate> users = Collections.emptyList();
             switch (mode) {
                 case CRITERIA -> {
                     CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -175,12 +165,11 @@ public class HibernateDaoImpl implements Dao<UserHibernate>, AutoCloseable {
                             .getResultList();
                 }
             }
-        } catch (RuntimeException e) {
-            session.getTransaction().rollback();
-        }
 
-        session.getTransaction().commit();
-        return Optional.of(users);
+            session.getTransaction().commit();
+
+            return Optional.of(users);
+        }
     }
 
     @Override
@@ -190,12 +179,10 @@ public class HibernateDaoImpl implements Dao<UserHibernate>, AutoCloseable {
 
     @Override
     public Optional<List<UserHibernate>> getAll(Integer limit, Integer offset) {
-        Session session = factory.getCurrentSession();
-        session.beginTransaction();
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
 
-        List<UserHibernate> users = Collections.emptyList();
-
-        try {
+            List<UserHibernate> users = Collections.emptyList();
             switch (mode) {
                 case CRITERIA -> {
                     CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -219,20 +206,18 @@ public class HibernateDaoImpl implements Dao<UserHibernate>, AutoCloseable {
                             .getResultList();
                 }
             }
-        } catch (RuntimeException e) {
-            session.getTransaction().rollback();
-        }
 
-        session.getTransaction().commit();
-        return Optional.of(users);
+            session.getTransaction().commit();
+
+            return Optional.of(users);
+        }
     }
 
     @Override
     public void updateById(Long id, UserHibernate user) {
-        Session session = factory.getCurrentSession();
-        session.beginTransaction();
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
 
-        try {
             switch (mode) {
                 case CRITERIA -> {
                     CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -259,19 +244,16 @@ public class HibernateDaoImpl implements Dao<UserHibernate>, AutoCloseable {
                             .executeUpdate();
                 }
             }
-        } catch (RuntimeException e) {
-            session.getTransaction().rollback();
-        }
 
-        session.getTransaction().commit();
+            session.getTransaction().commit();
+        }
     }
 
     @Override
     public void deleteById(Long id) {
-        Session session = factory.getCurrentSession();
-        session.beginTransaction();
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
 
-        try {
             switch (mode) {
                 case CRITERIA -> {
                     CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -290,11 +272,9 @@ public class HibernateDaoImpl implements Dao<UserHibernate>, AutoCloseable {
                             .executeUpdate();
                 }
             }
-        } catch (RuntimeException e) {
-            session.getTransaction().rollback();
-        }
 
-        session.getTransaction().commit();
+            session.getTransaction().commit();
+        }
     }
 
     @Override
