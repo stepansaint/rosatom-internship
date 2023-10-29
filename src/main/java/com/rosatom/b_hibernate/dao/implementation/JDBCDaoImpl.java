@@ -34,8 +34,6 @@ public class JDBCDaoImpl implements Dao<UserJDBC>, AutoCloseable {
                 "jdbc:postgresql://localhost:5432/" + dbName,
                 user,
                 password);
-        Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-        ResultSet set = statement.executeQuery(" ");
     }
 
     @Override
