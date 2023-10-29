@@ -1,0 +1,764 @@
+SQL
+- Что такое СУБД?
+Система Управления Базами Данных позволяет создавать
+и манипулировать Базами Данных (набором упорядоченных
+и структурированных данных)
+
+
+
+- Что подразумевается под СУБД?
+СУБД - это ядро (все процессы проходят через него, следит за изменениями БД),
+    процессор/компилятор (преобразует SQL-запросы в компьютерные инструкции),
+    утилита (система управления)
+    и БД
+
+
+
+- Какие существуют типы СУБД?
+    По расположению БД:
+        локальная (на сервере)
+        распределенная (на разных серверах)
+        и локальная, и распределенная
+    По хранению данных:
+        клиент-серверная (любой пользователь - к серверу)
+        файл-серверная (через СУБД - к серверу)
+        встраиваемая (отдельный модуль для управления данными)
+    По языку запросов:
+        SQL (структурированный запрос к БД)
+        NoSQL (запрос, основанный на ЯП)
+    По структуре данных:
+        Реляционная (связанные таблицы) - PostgreSQL
+        Ключ-значение (словарь) - Redis
+        Документная (нет строго ограничения структуры) - MongoDB
+        Графовая (узел-ребро) - Neo4j
+        Колоночная (последовательно в виде колонки) - ClickHouse
+
+
+
+- Какова архитектура PostgreSQL?
+Реляционная СУБД клиент-серверного вида.
+
+Клиентский запрос (каждый запрос):
+    Разбор: синтаксический (опечатки) и семантический (какие объекты, есть ли права)
+    Трансформация: вместо view подставляется сам текст (можно самому прописать правила)
+    Планирование (планировщик): как наиболее эффективно выполнить (в бд лежит статистика)
+    Выполнение: спланированное дерево передается
+
+
+
+- Из каких групп операторов состоит SQL?
+DDL (Data Definition Language) / CREATE ALTER DROP / для сущностей БД
+DML (Data Manipulation Language) / INSERT SELECT UPDATE DELETE / для данных
+DCL (Data Control Language) / GRANT DENY REVOKE / для прав доступа
+TCL (Transaction Control Language) / COMMIT ROLLBACK / для транзакций
+
+
+
+- Что подразумевается под таблицей и полем в SQL?
+Таблица - объект из записей, которые структурированы полями
+
+
+
+- Что такое первичный ключ?
+Поле (поля) для идентификации записей в таблице.
+Не null, уникальный
+
+
+
+- Когда используется PRIMARY KEY?
+Для идентификации каждой записи
+
+
+
+- Что такое уникальный ключ (Unique key)?
+Поле, которое не может повторяться во всей таблице.
+Может быть null
+
+
+
+- Что такое внешний ключ (Foreign Key)?
+Поле (поля), ссылающееся на первичный ключ другой таблицы.
+(UPDATE CASCADE - изменение первичного ключа главной таблицы
+    меняет внешний ключ подчиненной таблицы)
+
+
+
+- Какие ограничения (constraints) вы знаете, как они работают и указываются?
+Ограничения на уровне полей / таблиц.
+Primary Key (по-умол
+Foreign Key
+Unique
+Not Null
+Default
+Check
+Index:
+    <- кластеризованный - один (просто отсортированная главная таблица по данному полю)
+    <- не кластеризованный - несколько (отдельная таблица, отсортированная по данному полю,
+        где есть ссылка на главную таблицу, либо лежит вся запись в листе)
+    (Б-3, хэш-функция)
+
+
+
+- Что такое AUTO_INCREMENT?
+Инкремент значения при добавлении новой записи
+    (id serial PRIMARY KEY)
+
+
+
+- Что подразумевается под целостностью данных?
+Соответствие записей структуре и заданным ограничения
+
+
+
+- Какие внутренние типы данных PostgreSQL вы знаете?
+Можем создать свой тип (CREATE TYPE)
+
+bigint (int8) - signed eight-byte integer
+bigserial (serial8) - autoincrementing eight-byte integer
+bit[(n)] - fixed-length bit string
+bit varying[(n)] (varbit[(n)]) - variable-length bit string
+boolean	(bool) - logical Boolean (true/false)
+box - rectangular box on a plane
+bytea - binary data (“byte array”)
+character[(n)] (char[(n)]) - fixed-length character string
+character varying[(n)] (varchar[(n)]) - variable-length character string
+cidr - IPv4 or IPv6 network address
+circle - circle on a plane
+date - calendar date (year, month, day)
+double precision (float8) - double precision floating-point number (8 bytes)
+inet - IPv4 or IPv6 host address
+integer	(int, int4)	- signed four-byte integer
+interval [fields] [(p)] - time span
+json - textual JSON data
+jsonb - binary JSON data, decomposed
+line - infinite line on a plane
+lseg - line segment on a plane
+macaddr - MAC (Media Access Control) address
+macaddr8 - MAC (Media Access Control) address (EUI-64 format)
+money - currency amount
+numeric[(p, s)]	(decimal[(p, s)]) - exact numeric of selectable precision
+path - geometric path on a plane
+pg_lsn - PostgreSQL Log Sequence Number
+pg_snapshot - userJDBC-level transaction ID snapshot
+point - geometric point on a plane
+polygon - closed geometric path on a plane
+real (float4) - single precision floating-point number (4 bytes)
+smallint (int2) - signed two-byte integer
+smallserial	(serial2) - autoincrementing two-byte integer
+serial (serial4) - autoincrementing four-byte integer
+text - variable-length character string
+time[(p)] [without time zone] - time of day (no time zone)
+time[(p)] with time zone (timetz) - time of day, including time zone
+timestamp[(p)][without time zone] - date and time (no time zone)
+timestamp[(p)] with time zone (timestamptz)	- date and time, including time zone
+tsquery - text search query
+tsvector - text search document
+txid_snapshot - userJDBC-level transaction ID snapshot (deprecated; see pg_snapshot)
+uuid - universally unique identifier
+xml - XML data
+
+
+
+- В чем разница между типом данных CHAR и VARCHAR в SQL?
+CHAR - фиксированная длина строки, добивается пробелами
+VARCHAR - переменная длина строки
+
+
+
+- Чем VARCHAR отличается от NVARCHAR?
+VARCHAR - текст из символов в 1 байт (ASCII), максимальная длина 8000 символов
+NVARCHAR - текст из символов в 2 байт (Unicode), максимальная длина 4000 символов
+
+
+
+- Для чего используется ключевое слово ORDER BY?
+Сортировка выборки (SELECT)
+ORDER BY field [(ASC), DESC]
+
+
+
+- Для чего используется ключевое слово GROUP BY?
+Группировка выборки (SELECT)
+GROUP BY field1, field2...
+
+
+
+- Для чего используется ключевое слово DISTINCT?
+Получить уникальную выборку
+SELECT DISTINCT field1, field2
+
+
+
+- Что такое агрегатные функции? Приведите примеры.
+Скалярная функция: 1 аргумент -> 1 результат
+Агрегатная функция: N аргументов -> 1 результат (вычисление над выборкой)
+COUNT
+MAX / MIN
+AVG
+SUM
+
+
+
+- В Чем разница между HAVING и WHERE?
+WHERE - выбирает записи, затем группировка и агрегатные функции
+HAVING - группировка и агрегатные функции, затем выбирает записи
+
+
+
+- Назовите четыре основных типа JOIN в SQL
+JOIN - соединение нескольких таблиц с общим ключом
+JOIN (INNER JOIN) - пересекающиеся ключи
+LEFT JOIN (LEFT OUTER JOIN) - все левые ключи
+RIGHT JOIN (RIGHT OUTER JOIN) - все правые ключи
+FULL JOIN (FULL OUTER JOIN) - все ключи
+
+
+
+- А что такое Self JOIN?
+Соединение записей из одной таблицы (JOIN или WHERE).
+Нужно использовать aliases.
+
+SELECT field
+  FROM table alias1
+  JOIN table alias2
+    ON alias1.field = alias2.field;
+
+SELECT field
+  FROM table alias1, table alias2
+ WHERE alias1.field = alias2.field;
+
+
+
+- В чем разница между перекрестным (cross join) и естественным (natural join) соединением?
+CROSS JOIN - соединение без условия, декартово произведение
+NATURAL JOIN - соединение общих полей с одинаковыми именами
+    и типом данных, имеющее только одну копию
+
+
+
+- Как работают подстановочные знаки?
+Это регулярные выражения.
+LIKE:
+    % - 0> символов
+    _ - 1 символ
+ILIKE: без учета регистра
+SIMILAR TO: (поддерживает POSIX regex)
+    []
+    |
+    *
+    +
+    ?
+    {m, n}
+
+
+
+- Для чего нужен оператор UNION?
+SELECT ...
+UNION - поля должны быть в одинаковом порядке, удаляет дубликаты
+(UNION ALL - оставляет дубликаты)
+SELECT ...
+
+
+
+- Что такое нормализация и денормализация?
+Нормальные формы - идеальная модель реляционной алгебры
+
+Нормализация - процесс приведения таблиц к нормальным формам, т.е.
+    устранение избыточности (данных, к-е хранятся в нескольких местах),
+    которая может приводить к аномалиям (разные записи об одном объекте)
+Индекс - своего рода избыточность (но за этим следит СУБД)
+
+Денормализация - присутствует избыточность, зато можем выбирать данные
+    без JOIN (эффективнее)
+
+отношения - таблицы
+атрибуты - поля
+кортежи - записи
+
+1НФ:
+    - нет повторяющихся записей
+    - нет повторяющихся полей
+    - все поля атомарны (записи без запятых)
+2НФ:
+    - находится в 1НФ
+    - есть первичный ключ
+    - другие поля зависят целиком от первичного ключа, не от его части
+3НФ:
+    - находится в 2НФ
+    - другие поля зависят только от первичного ключа, не от других полей
+
+
+
+- Выбор БД. Теорема CAP (Брюера).
+CAP: Consistency (Cогласованность)
+                                во всех узлах данные не противоречат друг другу
+     Availability (Доступность)
+                                любой запрос завершится откликом,
+                                но разные узлы могут ответить по-разному
+     Partition Tolerance (устойчивость к распределению)
+                                расщепление распределенной системы на секции
+                                не приведет к некорректным откликам
+
+БД способна реализовать только 2 из 3.
+
+Реляционная - CA:
+    Strong Consistency
+    Надежность транзакционной системы ACID:
+        Atomicity (атомарность) транзакция будет зафиксирована полностью (благодаря откатам)
+        Consistency (целостность) связанные данные всегда должны быть связанными (благодаря откатам)
+        Isolation (изолированность) данные во время транзакции не могут быть изменены (благодаря блокировкам)
+        Durability (надежность) если транзакция прошла, то уже никакие проблемы дальнейшие не изменят ее
+
+noSQL - СP: Cassandra
+      - AP: MongoDB
+      для обоих BASE (противопоставление ACID):
+          Basically Available (можем жертвовать Availability, если есть другое требование)
+          Soft-state (не все сессии могут быть откатаны)
+          Eventually Consistent (слабая согласованность)
+
+
+
+- Triggers.
+Выполняются при DML-командах.
+Удобно для ведения аудитов.
+Используется вместе с функциями, которые должны быть объявлены до.
+
+
+
+
+
+JDBC:
+- Что такое JDBC?
+Platform independent Java Database Connectivity API
+Состоит из:
+             (Java Application)
+                  JDBC API
+             JDBC DriverManager
+JDBC Driver(1)  JDBC Driver(2)  JDBC Driver(3)
+
+
+
+- Что такое JDBC Driver и какие различные типы драйверов JDBC вы знаете?
+JDBC Driver - конвертирует Java-запросы в DBMS-запросы:
+    - JDBC-ODBC мост. Делегирует работу установленному в системе ODBC-драйверу.
+        Платформно-зависимый. Не поддерживается с Java 8.
+    - Native API. Делегирует работу библиотеке, установленной в системе.
+        Платформно-зависимый. Библиотеки специфичны для конкретной базы,
+        поэтому такой драйвер обычно работает быстрее.
+    - Драйвер сетевого протокола. Работает с промежуточным слоем
+        (JavaEE сервером). Реализован на Java.
+    - Драйвер протокола БД (Тонкий Драйвер). Полная реализация протокола взаимодействия.
+        Логика протокола находится прямо в драйвере.
+
+
+
+- Какие основные этапы работы с базой данных при использовании JDBC?
+Регистрация драйвера (Class.forName() / добавление в classpath)
+Установление соединения (DriverManager.getConnection(...))
+Создание SQL-запроса (connection.createStatement())
+Выполнение SQL-запроса (statement.execute())
+*Обработка результата (resultSet.next())*
+Закрытие запроса/соединения (close())
+
+
+
+- Как используется JDBC DriverManager class?
+JDBC DriverManager — фабрика по получению Connection.
+Используется для подключению с помощью зарегистрированных драйверов.
+
+
+
+- Как создать Connection?
+DriverManager.getConnection(...)
+
+
+
+- Как закрыть Connection?
+connection.close();
+
+
+
+- Что такое пул соединений в базе данных?
+Кэшированный набор соединений.
+Вместо создания нового соединения с БД при каждом пользовательском запросе,
+могут использоваться соединения из пула (после использования они помещаются туда).
+
+
+
+- Чем отличается Statement от PreparedStatement?
+PreparedStatement может быть закеширован.
+Спасает от SQL injection.
+
+
+
+- Какие различия между execute, executeQuery, executeUpdate?
+boolean execute() - любой запрос;
+    true, если первый результат ResultSet (statement.getResultSet())
+ResultSet executeQuery() - для SELECT
+int executeUpdate() - для не-SELECT количество измененных строк
+    или DML - 0
+
+
+
+- Что такое JDBC ResultSet?
+Представляет выборку.
+По-умолчанию, можно перемещаться только вперед.
+Изменить возможно через connection.prepareStatement("", ResultSet.SCROLL)
+
+
+
+- Какие существуют различные типы JDBC ResultSet?
+ResultSet.TYPE_FORWARD_ONLY (по-умолчанию)
+    Курсора только в прямом направлении (next())
+ResultSet.TYPE_SCROLL_INSENSITIVE
+    Двунаправленный курсор (next(), previous(), last())
+    Не чувствителен к изменениям в таблице после получения результата
+ResultSet.TYPE_SCROLL_SENSITIVE
+    Чувствителен к изменениям в таблице
+
+
+
+- Как используются методы setFetchSize() и SetMaxRows() в Statement?
+setFetchSize() - (сервер) сколько записей должны быть получены при запросе к БД
+setMaxRows() - (клиент) ограничивает размер ResultSet'а, просто игнорируя другие
+
+
+
+- Как вызвать хранимую процедуру?
+Создание в Postgres:
+    CREATE PROCEDURE getbyid(a integer)
+    LANGUAGE sql
+    AS $$
+    	select * from users where id = a;
+    $$
+
+Java-вызов:
+CallableStatement statement = connection.prepareCall("CALL getbyid(?)");
+statement.setInt(1, 1);
+statement.execute();
+
+
+
+- Что такое JDBC Transaction Management и зачем он нужен?
+Транзакция - набор операций, который является целостным.
+Можем использовать JDBC Transaction Management, если
+    connection.setAutoCommit(false) (true по-умолчанию).
+Теперь есть возможность:
+    try (
+        statement.execute("*;");
+
+        // Savepoint savepoint = connection.setSavepoint();
+
+        statement.execute("SELECT * FROM users;");
+
+    //  connection.releaseSavepoint(savepoint);
+
+        // всегда нужно .commit()
+        connection.commit();
+    ) catch (SQLException e) {
+        connection.rollback();
+
+        // будет откат после savepoint
+        // connection.rollback(savepoint);
+    }
+
+
+
+- Как откатить JDBC транзакцию?
+connection.rollback({savepoint})
+    (но не откатываются DDL-операции, т.к. DB сама совершает эти операции).
+Как обходной вариант, использовать
+DROP TABLE table IF EXISTS при rollback'е
+
+
+
+- Расскажите о JDBC DataSource. Какие преимущества он дает?
+Продвинутый DriverManager.
+Есть PreparedStatement cache, Connection Pool
+
+
+
+- Какая разница между java.util.Date и java.sql.Date?
+java.sql.Date (только дата, это SQL DATE)
+    extends java.util.Date (время и дата)
+java.sql.Date имеет дополнительные методы:
+    - valueOf()
+    - toLocalDate() (java.time.LocalDate)
+
+
+
+- Расскажите о типах данных CLOB и BLOB в JDBC.
+CLOB (Character Large OBject)
+    если не помещается в VARCHAR (предел 32 кбайта)
+BLOB (Binary Large OBject)
+    для изображений, видео, скомпилированного кода
+
+
+
+- Как вставить изображение или необработанные данные в базу данных?
+Использовать BLOB (Postgres - BYTEA)
+
+
+
+- Уровни изоляции транзакции.
+Isolation Level defends:        Transactions    Dirty Reads    Non-Repeatable Reads    Phantom Reads
+TRANSACTION_NONE                     -              -                   -                    -
+TRANSACTION_READ_UNCOMMITTED         +              -                   -                    -
+TRANSACTION_READ_COMMITTED           +              +                   -                    -
+TRANSACTION_REPEATABLE_READ          +              +                   +                    -
+TRANSACTION_SERIALIZABLE             +              +                   +                    +
+
+Dirty Reads: пишем данные, читаем в другой транзакции, делаем rollback на запись.
+Non-Repeatable Reads: читаем данные, обновляем их, читаем уже другие.
+Phantom Reads: читаем данные, записываем новую, читаем снова уже больше.
+
+(TRANSACTION_NONE) TRANSACTION_READ_UNCOMMITTED:
+    Dirty Reads, Non-Repeatable Reads, and Phantom Reads can occur.
+TRANSACTION_READ_COMMITTED:
+    Dirty Reads are prevented; Non-Repeatable Reads and Phantom Reads can occur.
+TRANSACTION_REPEATABLE_READ:
+    Dirty Reads, Non-Repeatable Reads are prevented; Phantom Reads can occur.
+TRANSACTION_SERIALIZABLE:
+    Dirty Reads, Non-Repeatable Reads, Phantom Reads are prevented.
+
+
+
+- Best Practices в JDBC.
+использовать PreparedStatement вместо Statement,
+             JDBC Transaction Management
+закрывать ресурсы
+
+
+
+
+
+Hibernate:
+- Что такое ORM?
+Object Relational Mapping (Объектно-Реляционное Отображение).
+Java-объект представим в виде записи (и наоборот).
+ORM воплотилась в спецификации JPA.
+
+
+
+- Что такое Hibernate? Какие преимущества он дает?
+Hibernate - конкретная реализация JPA (Java Persistence API) (JPA-provider).
+Устраняет множество повторяющегося кода, использует кэш.
+
+
+
+- Чем отличает JPA и Hibernate?
+JPA - спецификация (работы ORM-инструмента), по которой сделан Hibernate.
+Hibernate предоставляет дополнительную функциональность, но тогда необходимо
+работать через Hibernate API (не JPA API).
+
+
+
+- Какие преимущества Hibernate над JDBC?
+<- убирает много лишнего кода
+<- RuntimeException вместо SQLException
+<- HQL более ООП, чем SQL
+<- кэширование
+
+
+
+- Что делает аннотация Entity?
+Экземпляры данной сущности должны быть сохранены в БД.
+Внутри должно быть поле @Id и конструктор по-умолчанию.
+
+
+
+- Что делает аннотация Id?
+Данное поле является первичным ключом для сущности (Entity bean).
+
+
+
+- Что делает аннотация GeneratedValue?
+Используется вместе с @Id для стратегии генерации значения.
+GenerationType.AUTO - может быть любым
+GenerationType.SEQUENCE - последовательность (хорошо)
+GenerationType.TABLE - через другую таблицу (не очень)
+GenerationType.IDENTITY - через БД (хорошо)
+
+
+
+- Что делает аннотация Column?
+Указывает к какому полю в таблице относится поле класса.
+@Column(name = "first_name", nullable = false, length = 50)
+
+
+
+- Что делает аннотация OneToOne, OneToMany, ManyToOne?
+Могут быть Uni-directional и Bi-directional.
+@OneToOne: связь между полем одного Entity и другим Entity.
+@OneToMany и @ManyToOne: связь между одним полем к множеству экземпляров другого Entity
+@ManyToMany: связь многие ко многим
+
+
+
+- Что делает аннотация Cascade? Какие каскадные типы вы знаете?
+Автоматически применить действие к связанным сущностям.
+
+CascadeType.ALL - все
+CascadeType.PERSIST - сохранение
+CascadeType.MERGE - обновление
+CascadeType.REMOVE - удаление
+CascadeType.DETACH - отсоединение
+CascadeType.REFRESH - обновление
+CascadeType.NONE - ни одно
+
+
+
+- Расскажите о интерфейсе SessionFactory в Hibernate.
+SessionFactory extends EntityManagerFactory.
+SessionFactory связан с одной БД, используется для получения объектов Session,
+через которые можно изменять БД.
+
+Если проводить параллель с JDBC:
+    SessionFactory (EntityManagerFactory) - аналог DataSource
+    Session (EntityManager) - аналог Connection
+
+
+
+- Расскажите о интерфейсе Session в Hibernate.
+Session - соединение с БД для взаимодействия
+
+
+
+- Какая разница между методами Hibernate Session get() и load()?
+get() - всегда обращается к БД, возвращает объект или null
+load() - если есть в кеше - вернет, иначе обратиться к БД - объект или исключение
+
+
+
+- Как в Hibernate устроено кэширование?
+First Level Cache - в течение Session
+Second Level Cache - в течение SessionFactory, необязательно
+Query Cache - интегрирован с Second Level Cache (для частых запросов с одинаковыми параметрами)
+
+Запрос к БД -> проверка кеша 1 уровня на наличие объекта -> проверка кеша 2 уровня
+    -> объект кладется в 1 уровень и возвращается
+
+
+
+- Что такое кэш 1 уровня?
+First Level Cache - активен по-умолчанию в Session
+
+
+
+- Что такое кэш 2 уровня? Как настраивается кэш 2 уровня?
+Second Level Cache - не активен по-умолчанию в SessionFactory.
+Включить в hibernate.cfg.xml, выбрать кеш-провайдер (EHCache), @Cache на entity
+
+
+
+- Что такое кэш запросов?
+Query Cache - не активен по-умолчанию в SessionFactory.
+Кэш запросов используется для уменьшения времени
+ответа СУБД для часто используемых запросов.
+
+
+
+- Что делает метод merge()?
+Обновить состояние управляемого объекта состоянием детач-объекта
+
+
+
+- Что делает метод save()?
+Сохраняет / обновляет объект в таблице и возвращает его id
+
+
+
+- Что делает метод persist()?
+Объект только присоединяется к текущему Persistence Context,
+    затем нужно flush()
+
+
+
+- Можно ли наследовать Entity класс от другого Entity класса? Какие стратегии наследования существуют?
+Да.
+На entity: главной @MappedSuperclass // позволяет в наследниках иметь поля родителя
+        или
+            @Inheritance(
+                InheritanceType.SINGLE_TABLE // общая таблица со всеми полями классов
+                        @DiscriminatorColumn // для создания поля в таблице
+                        @DiscriminatorValue // с данным значением у каждого класса
+                InheritanceType.JOINED // отдельные таблицы с возможностью join
+                InheritanceType.TABLE_PER_CLASS) // отдельные таблицы со сквозным id
+
+
+
+- Как реализованы JOIN'ы в Hibernate?
+С помощью аннотаций @OneToOne, @OneToMany, @ManyToOne, @ManyToMany
+или использовать в HQL запросе join
+
+
+
+- Что такое каскадные операции (cascading) в Hibernate?
+Каскадные операции позволяют автоматически управлять связанными сущностями.
+Из спецификации JPA:
+CascadeType.ALL
+CascadeType.PERSIST
+CascadeType.REMOVE
+CascadeType.DETACH
+CascadeType.MERGE
+
+
+
+- Что такое HQL?
+Hibernate Query Language (расширение JPQL).
+При запросах используются имена сущностей, не таблиц.
+
+
+
+- Что такое Criteria API?
+Более объектно-ориентированный подход создания запросов без использования
+    текста.
+
+
+
+- Можем ли мы выполнить Native-SQL запрос в Hibernate?
+Session#createSQLQuery(String).
+Но теряется возможность кеширования.
+
+
+
+- Какие существуют стратегии загрузки объектов в Hibernate?
+Eager Loading - связанные объекты загружаются все
+Lazy Loading - связанные объекты загружаются при первом обращении
+
+
+
+- Расскажи о Hibernate Validation
+Основан на спецификации BeanValidation API.
+Позволяет использовать @NotNull, @Min, @Size для полей entity.
+
+
+
+- Как управлять транзакциями в Hibernate?
+Transaction (EntityTransaction) имеет методы begin, commit, rollback.
+@Transactional на метод:
+    - не вызывать другой метод @Transactional из одного класса
+    - только public метод, занимает соединение с БД (выносить логику)
+    - Exception не ловится (передать в аннотация rollBackFor = Exception.class)
+
+
+
+- Расскажите про Domain Model паттерн
+Используется для выделения объектов области применения и их связей
+
+
+
+- Расскажите про Data Mapper паттерн
+Позволяет сохранять / вытаскивать сущности Domain Model из хранилища
+
+
+
+- Расскажите про Proxy паттерн
+Наследуется от определенного поля у entity
+    и при Lazy Loading делает обращение к хранилищу,
+    если данное поле не загружено
+
+
+
+- Расскажите про Factory паттерн
+Предоставляет интерфейс для создания объекта
